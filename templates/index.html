@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Smart News Reader</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg-color: #f9f9f9;
+      --card-bg: #ffffff;
+      --text-color: #1e1e1e;
+      --accent: #3b82f6;
+      --btn-hover: #2563eb;
+      --input-bg: #f0f2f5;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-color: #e5e7eb;
+      --accent: #60a5fa;
+      --btn-hover: #3b82f6;
+      --input-bg: #2a2a2a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 2rem;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+
+    .toggle-btn {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      color: var(--accent);
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    form > div {
+      min-width: 220px;
+      flex: 1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    select,
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .search-button {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--accent);
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-size: 1rem;
+    }
+
+    .search-button:hover {
+      background-color: var(--btn-hover);
+    }
+
+    .news-card {
+      background-color: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin: 0 auto 30px;
+      max-width: 720px;
+      transition: transform 0.2s ease;
+    }
+
+    .news-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .news-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .news-description {
+      font-size: 1rem;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background-color: var(--accent);
+      border: none;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: background-color 0.3s;
+      flex: 1 1 auto;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background-color: var(--btn-hover);
+    }
+
+    small {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: gray;
+    }
+
+    img {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .news-title {
+        font-size: 1.1rem;
+      }
+
+      .btn {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="top-bar">
+    <button id="themeToggle" class="toggle-btn" aria-label="Toggle Dark Mode">
+      <i class="fas fa-moon"></i>
+    </button>
+  </div>
+
+  <h1>📰 Smart News Reader</h1>
+
+  <form method="get">
+<div>
+    <label for="country">Country</label>
+    <select name="country" id="country" onchange="this.form.submit()">
+      <option value="us" {% if country == 'us' %}selected{% endif %}>USA</option>
+      <option value="in" {% if country == 'in' %}selected{% endif %}>India</option>
+      <option value="gb" {% if country == 'gb' %}selected{% endif %}>UK</option>
+      <option value="ca" {% if country == 'ca' %}selected{% endif %}>Canada</option>
+      <option value="au" {% if country == 'au' %}selected{% endif %}>Australia</option>
+    </select>
+  </div>
+    <div>
+      <label for="category">Category</label>
+      <select name="category" id="category" onchange="this.form.submit()">
+        <option value="">All</option>
+        <option value="business" {% if category == 'business' %}selected{% endif %}>Business</option>
+        <option value="sports" {% if category == 'sports' %}selected{% endif %}>Sports</option>
+        <option value="technology" {% if category == 'technology' %}selected{% endif %}>Technology</option>
+        <option value="health" {% if category == 'health' %}selected{% endif %}>Health</option>
+        <option value="entertainment" {% if category == 'entertainment' %}selected{% endif %}>Entertainment</option>
+      </select>
+    </div>
+    <div>
+      <label for="search">Search</label>
+      <input type="text" name="q" id="search" value="{{ query }}" placeholder="e.g. elections">
+    </div>
+    <div>
+      <label>&nbsp;</label>
+      <button type="submit" class="search-button">
+        <i class="fas fa-search"></i> Search
+      </button>
+    </div>
+  </form>
+
+  {% if articles %}
+    {% for article in articles %}
+      <div class="news-card">
+        {% if article.urlToImage %}
+          <img src="{{ article.urlToImage }}" alt="News image">
+        {% endif %}
+        <div class="news-title">{{ article.title }}</div>
+        <div class="news-description">{{ article.description }}</div>
+        <div class="button-group">
+          <a href="{{ article.url }}" class="btn" target="_blank">Read More</a>
+          <button class="btn" onclick="speak(`{{ article.title | safe }}`)">
+            <i class="fas fa-volume-up"></i> Listen
+          </button>
+        </div>
+        <small>Source: {{ article.source.name }}</small>
+<small>Published: {{ article.publishedAt[:10] }}</small>
+
+      </div>
+    {% endfor %}
+  {% else %}
+    <p style="text-align:center; color:gray;">No news found for the selected filters.</p>
+  {% endif %}
+
+  <script>
+    function speak(text) {
+      const synth = window.speechSynthesis;
+      synth.cancel();
+      const utterThis = new SpeechSynthesisUtterance(text);
+      synth.speak(utterThis);
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute("data-theme") || "light";
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
+      html.setAttribute("data-theme", newTheme);
+      localStorage.setItem("theme", newTheme);
+      updateThemeIcon(newTheme);
+    }
+
+    function updateThemeIcon(theme) {
+      const icon = document.querySelector('#themeToggle i');
+      if (icon) {
+        icon.className = theme === "dark" ? "fas fa-sun" : "fas fa-moon";
+      }
+    }
+
+    window.onload = () => {
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      updateThemeIcon(savedTheme);
+
+      // Add event listener for the theme toggle button:
+      document.getElementById("themeToggle").addEventListener("click", toggleTheme);
+    };
+  </script>
+
+</body>
+</html>
